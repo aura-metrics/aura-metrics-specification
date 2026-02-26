@@ -1,0 +1,52 @@
+{
+  "_description": "A failed deliverable: ETL pipeline migration. The agent got stuck in an infinite loop during apply, made 5 recovery attempts, and was ultimately abandoned. Low conformance (0.35).",
+  "schema_version": "0.1.0",
+  "change_id": "migrate-etl-pipeline",
+  "started_at": "2026-02-25T14:00:00Z",
+  "completed_at": "2026-02-25T16:30:00Z",
+  "status": "failed",
+  "description": "Migrate legacy ETL pipeline from Airflow to Dagster",
+  "metrics": {
+    "resolution_latency_seconds": 9000,
+    "phase_durations": {
+      "propose": 120,
+      "specs": 300,
+      "design": 600,
+      "tasks": 180,
+      "apply": 6600,
+      "verify": 1200
+    },
+    "tool_calls": {
+      "file_edit": 89,
+      "file_read": 142,
+      "bash": 67,
+      "grep": 34,
+      "glob": 12,
+      "total": 344
+    },
+    "apply_iterations": 6,
+    "recovery_attempts": 5,
+    "tasks_completed": 4,
+    "tasks_total": 15,
+    "conformance": {
+      "functional": 0.27,
+      "correctness": 0.40,
+      "constraints": 0.50,
+      "iteration_penalty": 0.25,
+      "overall": 0.35
+    },
+    "deliverable_failed": true,
+    "failure_type": "infinite_loop"
+  },
+  "spec_source": {
+    "framework": "jira",
+    "spec_id": "DATA-456",
+    "requirements_count": 15
+  },
+  "agent": {
+    "name": "claude-code",
+    "model": "claude-sonnet-4-20250514",
+    "framework": "claude-code"
+  },
+  "sessions": ["session-g7h8i9"]
+}

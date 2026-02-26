@@ -1,0 +1,53 @@
+{
+  "_description": "A deliverable spanning 3 Claude Code sessions. Planning happened in session 1 (morning). Apply started in session 2 (afternoon) and continued in session 3 (next morning). Timestamps show an overnight gap where the human was away.",
+  "schema_version": "0.1.0",
+  "change_id": "refactor-auth-module",
+  "started_at": "2026-02-25T09:00:00Z",
+  "completed_at": "2026-02-26T10:30:00Z",
+  "status": "completed",
+  "description": "Refactor authentication module to support OAuth 2.0 and API key auth",
+  "metrics": {
+    "resolution_latency_seconds": 91800,
+    "phase_durations": {
+      "propose": 180,
+      "specs": 600,
+      "design": 900,
+      "tasks": 300,
+      "apply": 5400,
+      "verify": 1200,
+      "archive": 60
+    },
+    "tool_calls": {
+      "file_edit": 45,
+      "file_read": 68,
+      "bash": 22,
+      "grep": 15,
+      "glob": 8,
+      "total": 158
+    },
+    "apply_iterations": 3,
+    "recovery_attempts": 2,
+    "tasks_completed": 10,
+    "tasks_total": 10,
+    "conformance": {
+      "functional": 1.0,
+      "correctness": 0.90,
+      "constraints": 0.90,
+      "iteration_penalty": 0.70,
+      "overall": 0.89
+    },
+    "deliverable_failed": false,
+    "failure_type": null
+  },
+  "spec_source": {
+    "framework": "github-issue",
+    "spec_id": "#127",
+    "requirements_count": 10
+  },
+  "agent": {
+    "name": "claude-code",
+    "model": "claude-sonnet-4-20250514",
+    "framework": "claude-code"
+  },
+  "sessions": ["session-j1k2l3", "session-m4n5o6", "session-p7q8r9"]
+}

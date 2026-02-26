@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aura-metrics.github.io/aura-metrics-specification/schemas/v0.1.0/aura-event.schema.json",
+  "title": "AURA Event",
+  "description": "Lightweight event record for streaming and real-time collection. Emitted at phase transitions and significant moments during deliverable execution.",
+  "type": "object",
+  "required": ["event_type", "timestamp", "change_id"],
+  "additionalProperties": false,
+  "properties": {
+    "_description": {
+      "type": "string",
+      "description": "Optional human-readable description of this record. Not used by tooling."
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "phase_start",
+        "phase_end",
+        "tool_call",
+        "recovery",
+        "deliverable_start",
+        "deliverable_end"
+      ],
+      "description": "Type of event."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the event occurred."
+    },
+    "change_id": {
+      "type": "string",
+      "description": "Deliverable identifier this event belongs to.",
+      "examples": ["add-dark-mode", "fix-login-bug"]
+    },
+    "phase": {
+      "type": "string",
+      "description": "Phase name, if applicable.",
+      "examples": ["propose", "specs", "design", "tasks", "apply", "verify", "archive"]
+    },
+    "data": {
+      "type": "object",
+      "description": "Event-specific payload. Structure varies by event_type.",
+      "additionalProperties": true
+    }
+  }
+}

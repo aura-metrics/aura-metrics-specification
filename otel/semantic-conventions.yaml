@@ -1,0 +1,126 @@
+groups:
+  - id: aura.deliverable
+    type: attribute_group
+    brief: "Attributes for AURA deliverable tracking."
+    attributes:
+      - id: aura.deliverable.id
+        type: string
+        brief: "Unique identifier for the deliverable."
+        examples: ["add-dark-mode", "fix-login-bug"]
+      - id: aura.deliverable.type
+        type: string
+        brief: "Type of deliverable."
+        examples: ["feature", "bugfix", "refactor", "chore"]
+      - id: aura.deliverable.status
+        type: string
+        brief: "Current or final status of the deliverable."
+        examples: ["planning", "executing", "verifying", "completed", "failed"]
+      - id: aura.deliverable.complexity
+        type: string
+        brief: "Estimated complexity of the deliverable."
+        examples: ["trivial", "simple", "moderate", "complex"]
+      - id: aura.deliverable.description
+        type: string
+        brief: "Human-readable summary of the deliverable."
+        examples: ["Add dark mode toggle to settings page"]
+
+  - id: aura.spec
+    type: attribute_group
+    brief: "Attributes describing the specification source."
+    attributes:
+      - id: aura.spec.framework
+        type: string
+        brief: "Spec framework name."
+        examples: ["openspec", "jira", "github-issue", "markdown", "prompt"]
+      - id: aura.spec.id
+        type: string
+        brief: "Identifier within the spec framework."
+        examples: ["changes/add-dark-mode", "PROJ-123", "#42"]
+      - id: aura.spec.requirements_count
+        type: int
+        brief: "Number of requirements extracted from the spec."
+        examples: [5, 12]
+
+  - id: aura.phase
+    type: attribute_group
+    brief: "Attributes for deliverable phase tracking."
+    attributes:
+      - id: aura.phase.name
+        type: string
+        brief: "Name of the current phase."
+        examples: ["propose", "specs", "design", "tasks", "apply", "verify", "archive"]
+      - id: aura.phase.iteration
+        type: int
+        brief: "Iteration count for this phase (1 = first attempt)."
+        examples: [1, 2, 3]
+
+  - id: aura.conformance
+    type: attribute_group
+    brief: "Spec conformance scoring attributes."
+    attributes:
+      - id: aura.conformance.functional
+        type: double
+        brief: "Functional completeness score (0–1)."
+        examples: [1.0, 0.8]
+      - id: aura.conformance.correctness
+        type: double
+        brief: "Correctness score (0–1)."
+        examples: [0.95, 1.0]
+      - id: aura.conformance.constraints
+        type: double
+        brief: "Constraint adherence score (0–1)."
+        examples: [1.0, 0.9]
+      - id: aura.conformance.iteration_penalty
+        type: double
+        brief: "Iteration penalty score (0–1)."
+        examples: [1.0, 0.85]
+      - id: aura.conformance.overall
+        type: double
+        brief: "Weighted overall conformance score (0–1)."
+        examples: [0.97, 0.82]
+
+  - id: aura.failure
+    type: attribute_group
+    brief: "Failure classification attributes."
+    attributes:
+      - id: aura.failure.type
+        type: string
+        brief: "Failure classification."
+        examples:
+          - "spec_misunderstanding"
+          - "hallucination"
+          - "infinite_loop"
+          - "tool_failure"
+          - "constraint_violation"
+          - "incomplete"
+          - "regression"
+
+  - id: aura.recovery
+    type: attribute_group
+    brief: "Recovery tracking attributes."
+    attributes:
+      - id: aura.recovery.attempt
+        type: int
+        brief: "Current recovery attempt number."
+        examples: [1, 2, 3]
+      - id: aura.recovery.total
+        type: int
+        brief: "Total recovery attempts for this deliverable."
+        examples: [0, 2, 5]
+
+  - id: aura.agent
+    type: attribute_group
+    brief: "Attributes describing the AI agent."
+    attributes:
+      - id: aura.agent.name
+        type: string
+        brief: "Agent identifier."
+        examples: ["claude-code", "cursor", "custom-agent"]
+      - id: aura.agent.model
+        type: string
+        brief: "Model used by the agent."
+        examples: ["claude-sonnet-4-20250514", "gpt-4o"]
+      - id: aura.agent.framework
+        type: string
+        brief: "Agent framework."
+        examples: ["claude-code", "langchain", "custom"]

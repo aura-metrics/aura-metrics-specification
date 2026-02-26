@@ -1,0 +1,206 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aura-metrics.github.io/aura-metrics-specification/schemas/v0.1.0/metrics-output.schema.json",
+  "title": "AURA Metrics Output",
+  "description": "The final record emitted when a deliverable is completed or failed. This is the primary AURA output format.",
+  "type": "object",
+  "required": ["schema_version", "change_id", "started_at", "completed_at", "status", "metrics"],
+  "additionalProperties": false,
+  "properties": {
+    "_description": {
+      "type": "string",
+      "description": "Optional human-readable description of this record. Not used by tooling."
+    },
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "AURA schema version (semver).",
+      "examples": ["0.1.0"]
+    },
+    "change_id": {
+      "type": "string",
+      "description": "Unique identifier for the deliverable.",
+      "examples": ["add-dark-mode", "fix-login-bug"]
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the deliverable began."
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the deliverable finished."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["completed", "failed"],
+      "description": "Final state of the deliverable."
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable summary of the deliverable."
+    },
+    "metrics": {
+      "type": "object",
+      "description": "The measured metrics for this deliverable.",
+      "properties": {
+        "resolution_latency_seconds": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Wall-clock seconds from start to completion."
+        },
+        "phase_durations": {
+          "type": "object",
+          "description": "Duration in seconds for each phase.",
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "tool_calls": {
+          "type": "object",
+          "description": "Tool call counts. Keys are tool names, plus a 'total' key.",
+          "properties": {
+            "total": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total tool calls across all tools."
+            }
+          },
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "apply_iterations": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of apply → verify cycles."
+        },
+        "recovery_attempts": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of recovery cycles triggered by failures."
+        },
+        "tasks_completed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of tasks completed."
+        },
+        "tasks_total": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of planned tasks."
+        },
+        "conformance": {
+          "type": "object",
+          "description": "Spec conformance scores.",
+          "properties": {
+            "functional": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Functional completeness score (0–1)."
+            },
+            "correctness": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Correctness score (0–1)."
+            },
+            "constraints": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Constraint adherence score (0–1)."
+            },
+            "iteration_penalty": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Iteration penalty score (0–1)."
+            },
+            "overall": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Weighted overall conformance score (0–1)."
+            }
+          },
+          "additionalProperties": false
+        },
+        "deliverable_failed": {
+          "type": "boolean",
+          "description": "Whether the deliverable failed spec conformance."
+        },
+        "failure_type": {
+          "type": ["string", "null"],
+          "enum": [
+            "spec_misunderstanding",
+            "hallucination",
+            "infinite_loop",
+            "tool_failure",
+            "constraint_violation",
+            "incomplete",
+            "regression",
+            null
+          ],
+          "description": "Failure classification, if the deliverable failed."
+        }
+      },
+      "additionalProperties": false
+    },
+    "spec_source": {
+      "type": "object",
+      "description": "Where the spec came from.",
+      "properties": {
+        "framework": {
+          "type": "string",
+          "description": "Spec framework name.",
+          "examples": ["openspec", "jira", "github-issue", "markdown", "prompt"]
+        },
+        "spec_id": {
+          "type": "string",
+          "description": "Identifier within the framework.",
+          "examples": ["changes/add-dark-mode", "PROJ-123"]
+        },
+        "requirements_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of requirements extracted from the spec."
+        }
+      },
+      "additionalProperties": false
+    },
+    "agent": {
+      "type": "object",
+      "description": "Information about the agent that produced this deliverable.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Agent identifier.",
+          "examples": ["claude-code", "cursor", "custom-agent"]
+        },
+        "model": {
+          "type": ["string", "null"],
+          "description": "Model used by the agent.",
+          "examples": ["claude-sonnet-4-20250514", "gpt-4o"]
+        },
+        "framework": {
+          "type": ["string", "null"],
+          "description": "Agent framework.",
+          "examples": ["claude-code", "langchain", "custom"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "sessions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Session identifiers for multi-session deliverables."
+    }
+  }
+}

@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aura-metrics.github.io/aura-metrics-specification/schemas/v0.1.0/deliverable-state.schema.json",
+  "title": "AURA Deliverable State",
+  "description": "Tracks the current state of an in-progress deliverable. Updated as the agent progresses through phases.",
+  "type": "object",
+  "required": ["change_id", "status", "started_at"],
+  "additionalProperties": false,
+  "$defs": {
+    "phase_record": {
+      "type": "object",
+      "description": "Timing record for a single phase.",
+      "properties": {
+        "started_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "When the phase started."
+        },
+        "completed_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "When the phase ended."
+        }
+      },
+      "additionalProperties": false
+    },
+    "tool_call_counts": {
+      "type": "object",
+      "description": "Tool call counts keyed by tool name.",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    }
+  },
+  "properties": {
+    "_description": {
+      "type": "string",
+      "description": "Optional human-readable description of this record. Not used by tooling."
+    },
+    "change_id": {
+      "type": "string",
+      "description": "Unique identifier for the deliverable.",
+      "examples": ["add-dark-mode", "fix-login-bug"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["planning", "executing", "verifying", "completed", "failed"],
+      "description": "Current state of the deliverable."
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the deliverable began."
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp."
+    },
+    "complexity": {
+      "type": "string",
+      "enum": ["trivial", "simple", "moderate", "complex", "unknown"],
+      "description": "Estimated complexity of the deliverable."
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable summary of the deliverable."
+    },
+    "spec_source": {
+      "type": "object",
+      "description": "Where the spec came from.",
+      "properties": {
+        "framework": {
+          "type": "string",
+          "description": "Spec framework name.",
+          "examples": ["openspec", "jira", "github-issue", "markdown", "prompt"]
+        },
+        "spec_id": {
+          "type": "string",
+          "description": "Identifier within the framework.",
+          "examples": ["changes/add-dark-mode", "PROJ-123"]
+        },
+        "requirements_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of requirements extracted from the spec."
+        }
+      },
+      "additionalProperties": false
+    },
+    "phases": {
+      "type": "object",
+      "description": "Phase timing records keyed by phase name.",
+      "properties": {
+        "propose": { "$ref": "#/$defs/phase_record" },
+        "specs": { "$ref": "#/$defs/phase_record" },
+        "design": { "$ref": "#/$defs/phase_record" },
+        "tasks": { "$ref": "#/$defs/phase_record" },
+        "apply": { "$ref": "#/$defs/phase_record" },
+        "verify": { "$ref": "#/$defs/phase_record" },
+        "archive": { "$ref": "#/$defs/phase_record" }
+      },
+      "additionalProperties": false
+    },
+    "current_phase": {
+      "type": "string",
+      "description": "The currently active phase.",
+      "examples": ["apply", "verify"]
+    },
+    "tasks_total": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of planned tasks."
+    },
+    "tasks_completed": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of tasks completed so far."
+    },
+    "tool_calls": {
+      "$ref": "#/$defs/tool_call_counts",
+      "description": "Tool call counts keyed by tool name."
+    },
+    "tool_calls_total": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total tool calls across all tools."
+    },
+    "recovery_attempts": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of recovery cycles so far."
+    },
+    "apply_iterations": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Number of apply cycles so far."
+    },
+    "sessions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Session identifiers for multi-session deliverables."
+    }
+  }
+}
