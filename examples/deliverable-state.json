@@ -1,0 +1,49 @@
+{
+  "_description": "An in-progress deliverable in the apply phase. The agent is halfway through implementing a search feature, with 4 of 8 tasks completed and some tool calls recorded.",
+  "change_id": "add-search-feature",
+  "status": "executing",
+  "started_at": "2026-02-26T09:00:00Z",
+  "updated_at": "2026-02-26T09:35:00Z",
+  "complexity": "moderate",
+  "description": "Add full-text search to the product catalog",
+  "spec_source": {
+    "framework": "openspec",
+    "spec_id": "changes/add-search-feature",
+    "requirements_count": 6
+  },
+  "phases": {
+    "propose": {
+      "started_at": "2026-02-26T09:00:00Z",
+      "completed_at": "2026-02-26T09:02:00Z"
+    },
+    "specs": {
+      "started_at": "2026-02-26T09:02:00Z",
+      "completed_at": "2026-02-26T09:05:00Z"
+    },
+    "design": {
+      "started_at": "2026-02-26T09:05:00Z",
+      "completed_at": "2026-02-26T09:10:00Z"
+    },
+    "tasks": {
+      "started_at": "2026-02-26T09:10:00Z",
+      "completed_at": "2026-02-26T09:12:00Z"
+    },
+    "apply": {
+      "started_at": "2026-02-26T09:12:00Z",
+      "completed_at": null
+    }
+  },
+  "current_phase": "apply",
+  "tasks_total": 8,
+  "tasks_completed": 4,
+  "tool_calls": {
+    "file_edit": 8,
+    "file_read": 12,
+    "bash": 3,
+    "grep": 5
+  },
+  "tool_calls_total": 28,
+  "recovery_attempts": 0,
+  "apply_iterations": 1,
+  "sessions": ["session-a1b2c3"]
+}
