@@ -2,7 +2,7 @@
 
 ## Abstract
 
-AURA (Agent Understanding, Reliability, and Accountability) is a metrics framework that measures the reliability and quality of AI agent output. Like DORA measures software delivery performance through four key metrics, AURA measures agent performance through five: Feature Throughput, Resolution Latency, Deliverable Failure Rate, Recovery Efficiency, and Spec Conformance. AURA provides a common language for evaluating whether an AI agent is producing work that meets its specifications — consistently, quickly, and correctly.
+AURA is a metrics framework that measures the reliability and quality of AI agent output. Like DORA measures software delivery performance through four key metrics, AURA measures agent performance through five: Feature Throughput, Resolution Latency, Deliverable Failure Rate, Recovery Efficiency, and Spec Conformance. AURA provides a common language for evaluating whether an AI agent is producing work that meets its specifications — consistently, quickly, and correctly.
 
 ## Status
 
