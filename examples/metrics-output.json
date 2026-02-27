@@ -37,13 +37,21 @@
       "overall": 0.97
     },
     "deliverable_failed": false,
-    "failure_type": null
+    "failure_type": null,
+    "token_usage": {
+      "input_tokens": 12000,
+      "output_tokens": 8500,
+      "total_tokens": 20500,
+      "estimated_cost_usd": 0.14
+    },
+    "human_interventions": 0
   },
   "spec_source": {
     "framework": "openspec",
     "spec_id": "changes/add-dark-mode",
     "requirements_count": 8
   },
+  "complexity": "moderate",
   "agent": {
     "name": "claude-code",
     "model": "claude-sonnet-4-20250514",

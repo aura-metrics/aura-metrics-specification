@@ -108,6 +108,36 @@ groups:
         brief: "Total recovery attempts for this deliverable."
         examples: [0, 2, 5]
 
+  - id: aura.tokens
+    type: attribute_group
+    brief: "Token usage tracking attributes."
+    attributes:
+      - id: aura.tokens.input
+        type: int
+        brief: "Total input tokens consumed."
+        examples: [12000, 50000]
+      - id: aura.tokens.output
+        type: int
+        brief: "Total output tokens generated."
+        examples: [8000, 35000]
+      - id: aura.tokens.total
+        type: int
+        brief: "Total tokens (input + output)."
+        examples: [20000, 85000]
+      - id: aura.tokens.estimated_cost_usd
+        type: double
+        brief: "Estimated cost in USD."
+        examples: [0.12, 1.50]
+
+  - id: aura.human
+    type: attribute_group
+    brief: "Human interaction tracking attributes."
+    attributes:
+      - id: aura.human.interventions
+        type: int
+        brief: "Number of human interventions during execution."
+        examples: [0, 2, 5]
+
   - id: aura.agent
     type: attribute_group
     brief: "Attributes describing the AI agent."

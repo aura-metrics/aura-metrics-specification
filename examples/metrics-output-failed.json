@@ -36,13 +36,21 @@
       "overall": 0.35
     },
     "deliverable_failed": true,
-    "failure_type": "infinite_loop"
+    "failure_type": "infinite_loop",
+    "token_usage": {
+      "input_tokens": 85000,
+      "output_tokens": 62000,
+      "total_tokens": 147000,
+      "estimated_cost_usd": 1.82
+    },
+    "human_interventions": 2
   },
   "spec_source": {
     "framework": "jira",
     "spec_id": "DATA-456",
     "requirements_count": 15
   },
+  "complexity": "complex",
   "agent": {
     "name": "claude-code",
     "model": "claude-sonnet-4-20250514",
