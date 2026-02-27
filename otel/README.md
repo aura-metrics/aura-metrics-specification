@@ -17,6 +17,8 @@ Attribute groups:
 - `aura.conformance` — Quality scoring dimensions
 - `aura.failure` — Failure classification
 - `aura.recovery` — Recovery attempt tracking
+- `aura.tokens` — Token usage tracking
+- `aura.human` — Human interaction tracking
 - `aura.agent` — Agent identification
 
 ## Span Hierarchy

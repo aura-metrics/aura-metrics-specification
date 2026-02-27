@@ -137,6 +137,38 @@
       "minimum": 1,
       "description": "Number of apply cycles so far."
     },
+    "token_usage": {
+      "type": "object",
+      "description": "Token usage so far for this deliverable.",
+      "properties": {
+        "input_tokens": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total input tokens consumed so far."
+        },
+        "output_tokens": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total output tokens generated so far."
+        },
+        "total_tokens": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total tokens (input + output) so far."
+        },
+        "estimated_cost_usd": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Estimated cost in USD so far."
+        }
+      },
+      "additionalProperties": false
+    },
+    "human_interventions": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of times a human has intervened so far during execution."
+    },
     "sessions": {
       "type": "array",
       "items": {

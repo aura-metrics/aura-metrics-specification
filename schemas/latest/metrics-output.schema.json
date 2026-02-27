@@ -147,6 +147,38 @@
             null
           ],
           "description": "Failure classification, if the deliverable failed."
+        },
+        "token_usage": {
+          "type": "object",
+          "description": "Token usage for this deliverable.",
+          "properties": {
+            "input_tokens": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total input tokens consumed."
+            },
+            "output_tokens": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total output tokens generated."
+            },
+            "total_tokens": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total tokens (input + output)."
+            },
+            "estimated_cost_usd": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Estimated cost in USD."
+            }
+          },
+          "additionalProperties": false
+        },
+        "human_interventions": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of times a human intervened during execution."
         }
       },
       "additionalProperties": false
@@ -172,6 +204,11 @@
         }
       },
       "additionalProperties": false
+    },
+    "complexity": {
+      "type": "string",
+      "enum": ["trivial", "simple", "moderate", "complex"],
+      "description": "Complexity classification of the deliverable."
     },
     "agent": {
       "type": "object",

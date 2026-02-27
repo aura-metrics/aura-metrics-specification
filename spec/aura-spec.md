@@ -306,6 +306,11 @@ The root `aura.deliverable` span covers the entire deliverable lifecycle. Child 
 | `aura.failure.type` | string | Failure classification | `"infinite_loop"` |
 | `aura.recovery.attempt` | int | Current recovery attempt number | `2` |
 | `aura.recovery.total` | int | Total recovery attempts | `3` |
+| `aura.tokens.input` | int | Total input tokens consumed | `12000` |
+| `aura.tokens.output` | int | Total output tokens generated | `8000` |
+| `aura.tokens.total` | int | Total tokens (input + output) | `20000` |
+| `aura.tokens.estimated_cost_usd` | double | Estimated cost in USD | `0.12` |
+| `aura.human.interventions` | int | Number of human interventions during execution | `0` |
 | `aura.agent.name` | string | Agent identifier | `"claude-code"` |
 | `aura.agent.model` | string | Model used | `"claude-sonnet-4-20250514"` |
 | `aura.agent.framework` | string | Agent framework | `"claude-code"` |
@@ -340,7 +345,83 @@ AURA is spec-framework agnostic. Any system that defines acceptance criteria for
 
 The `spec_source` field in the data model captures which framework was used. Integrations are responsible for mapping their native structures to AURA concepts.
 
-## 8. Performance Tiers
+## 8. Supporting Metrics
+
+The five headline metrics tell you *what's happening*. The supporting metrics tell you *why*. Every supporting metric feeds at least one headline metric. When a headline metric goes red on a dashboard, drill into the supporting metrics to find the cause.
+
+### 8.1 Token Usage
+
+- **Definition**: Total input tokens, output tokens, and cost per deliverable.
+- **Feeds**: Recovery Efficiency, Feature Throughput
+- **Why it matters**: If an agent uses 50k tokens on a deliverable that should take 10k, the extra 40k is recovery overhead. It also contextualises Feature Throughput — are you shipping more because the agent is efficient, or because it's brute-forcing with expensive models? Token cost per deliverable is the unit economics metric teams will care about most once they're past the "does it work" phase.
+
+### 8.2 Tool Call Count
+
+- **Definition**: Tool call counts by type (Write, Edit, Bash, Read, etc.).
+- **Feeds**: Recovery Efficiency, Resolution Latency
+- **Why it matters**: A healthy deliverable has a predictable ratio of reads to writes. If you see 40 Read calls and 2 Writes, the agent spent most of its time searching. If you see 15 Write calls and 12 Edit calls on the same files, it's rewriting its own work. The pattern tells you where the agent is struggling.
+
+### 8.3 Phase Duration
+
+- **Definition**: Time spent in each phase (propose, specs, design, tasks, apply, verify).
+- **Feeds**: Resolution Latency
+- **Why it matters**: Decomposes Resolution Latency into its parts. A 4-hour deliverable where 3.5 hours was in `apply` is very different from one where 2 hours was human review during `verify`. This is where you find the bottleneck — is the agent slow, or is the human slow to review?
+
+### 8.4 Apply Iterations
+
+- **Definition**: How many times the apply phase ran before acceptance.
+- **Feeds**: Spec Conformance, Recovery Efficiency
+- **Why it matters**: The most direct indicator feeding Spec Conformance and Recovery Efficiency. First-time-right deliverables score higher on conformance (via the iteration penalty) and have zero recovery overhead. Tracking the count over time tells you if your agent is getting better or worse.
+
+### 8.5 Recovery Attempts
+
+- **Definition**: Count of rework cycles within an apply iteration.
+- **Feeds**: Recovery Efficiency
+- **Why it matters**: Different from apply iterations. An apply iteration is "the agent stopped, human said try again." A recovery attempt is "the agent hit an error and self-corrected within a single run." High recovery attempts with eventual success means the agent is resilient but inefficient. High recovery attempts with failure means it's thrashing.
+
+### 8.6 Tasks Completed vs Total
+
+- **Definition**: Completed tasks versus total planned tasks from the spec's task checklist.
+- **Feeds**: Spec Conformance
+- **Why it matters**: The raw input to the functional completeness dimension of Spec Conformance. Useful on its own as a progress metric during execution. It answers "how far did the agent get" for both in-progress and failed deliverables.
+
+### 8.7 Failure Type Distribution
+
+- **Definition**: Breakdown across failure types (spec_misunderstanding, hallucination, infinite_loop, tool_failure, constraint_violation, incomplete, regression).
+- **Feeds**: Deliverable Failure Rate
+- **Why it matters**: Categorises *why* deliverables fail, which the Deliverable Failure Rate alone can't tell you. A 12% failure rate means very different things if it's all tool failures (infrastructure problem) versus all hallucinations (model problem). This is the metric that tells you where to invest.
+
+### 8.8 Human Intervention Count
+
+- **Definition**: Number of times a human had to step in during execution.
+- **Feeds**: Recovery Efficiency, Spec Conformance
+- **Why it matters**: An agent that completes every deliverable but needs 5 human nudges per run isn't really autonomous. This metric tracks the journey toward full autonomy.
+
+### 8.9 Complexity Distribution
+
+- **Definition**: Trivial/simple/moderate/complex breakdown of deliverables.
+- **Feeds**: Feature Throughput, Resolution Latency
+- **Why it matters**: Contextualises Feature Throughput and Resolution Latency. Shipping 10 trivial deliverables/day is not the same as shipping 2 complex ones. Without this, you can game throughput by splitting work into tiny pieces.
+
+### 8.10 Relationship Map
+
+```
+Token Usage ──────────┐
+Tool Call Count ──────┼──→ Recovery Efficiency
+Recovery Attempts ────┘
+                      ↕
+Phase Duration ───────────→ Resolution Latency
+                      ↕
+Apply Iterations ─────┐
+Tasks Completed ──────┼──→ Spec Conformance
+Human Interventions ──┘
+                      ↕
+Failure Type ─────────────→ Deliverable Failure Rate
+                      ↕
+Complexity Distribution ──→ Feature Throughput
+```
+
+## 9. Performance Tiers
 
 Summary of all performance tiers across the five metrics:
 
@@ -354,7 +435,7 @@ Summary of all performance tiers across the five metrics:
 
 Tier classification uses the most recent rolling window. The recommended default window is 7 days or 20 deliverables, whichever comes first.
 
-## 9. Philosophy
+## 10. Philosophy
 
 1. **Measure deliverables, not tasks.** A task is a means to an end. The deliverable — a verified outcome against a spec — is what matters.
 
@@ -368,7 +449,7 @@ Tier classification uses the most recent rolling window. The recommended default
 
 6. **Start simple, go deep.** A minimal AURA integration tracks three fields: start time, end time, and pass/fail. Full conformance scoring is opt-in. Integrations can adopt AURA incrementally.
 
-## 10. Versioning
+## 11. Versioning
 
 This specification uses [semantic versioning](https://semver.org/):
 
