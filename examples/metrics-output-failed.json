@@ -1,5 +1,5 @@
 {
-  "_description": "A failed deliverable: ETL pipeline migration. The agent got stuck in an infinite loop during apply, made 5 recovery attempts, and was ultimately abandoned. Low conformance (0.35).",
+  "_description": "A failed deliverable: ETL pipeline migration. The agent got stuck in an infinite loop during apply, made 5 recovery attempts, and was ultimately abandoned after 2 human interventions.",
   "schema_version": "0.1.0",
   "change_id": "migrate-etl-pipeline",
   "started_at": "2026-02-25T14:00:00Z",
@@ -28,13 +28,6 @@
     "recovery_attempts": 5,
     "tasks_completed": 4,
     "tasks_total": 15,
-    "conformance": {
-      "functional": 0.27,
-      "correctness": 0.40,
-      "constraints": 0.50,
-      "iteration_penalty": 0.25,
-      "overall": 0.35
-    },
     "deliverable_failed": true,
     "failure_type": "infinite_loop",
     "token_usage": {

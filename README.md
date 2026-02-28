@@ -2,19 +2,18 @@
 
 **DORA for pipelines. AURA for agents.**
 
-AURA measures the reliability and quality of AI agent output through five metrics.
+AURA measures the reliability and performance of AI agent output through four metrics.
 
 [aura-metrics.github.io](https://aura-metrics.github.io/aura-metrics-specification/) · [Read the spec](spec/aura-spec.md) · [JSON Schemas](schemas/latest/)
 
-## The Five Metrics
+## The Four Metrics
 
 | Metric | Measures | Elite |
 |--------|----------|-------|
-| Feature Throughput | Deliverables accepted / time | ≥3/day |
-| Resolution Latency | Spec received → accepted | <1 hour |
-| Deliverable Failure Rate | % failing conformance | <5% |
+| Feature Frequency | Deliverables accepted / time | ≥3/day |
+| Feature Lead Time | Spec received → accepted | <1 hour |
+| Human Intervention Rate | % requiring human takeover or abandoned | <5% |
 | Recovery Efficiency | Rework overhead | <5% |
-| Spec Conformance | Quality score 0–1 | ≥0.95 |
 
 ## Quick Start
 
@@ -29,7 +28,8 @@ Validate your AURA output against the JSON schemas:
   "status": "completed",
   "metrics": {
     "resolution_latency_seconds": 2700,
-    "conformance": { "overall": 0.97 }
+    "deliverable_failed": false,
+    "human_interventions": 0
   }
 }
 ```
@@ -60,4 +60,4 @@ AURA grew out of work on AgentEx — improving developer experience for AI agent
 
 ## License
 
-Apache 2.0
+MIT

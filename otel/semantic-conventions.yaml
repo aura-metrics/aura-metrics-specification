@@ -54,31 +54,6 @@ groups:
         brief: "Iteration count for this phase (1 = first attempt)."
         examples: [1, 2, 3]
 
-  - id: aura.conformance
-    type: attribute_group
-    brief: "Spec conformance scoring attributes."
-    attributes:
-      - id: aura.conformance.functional
-        type: double
-        brief: "Functional completeness score (0–1)."
-        examples: [1.0, 0.8]
-      - id: aura.conformance.correctness
-        type: double
-        brief: "Correctness score (0–1)."
-        examples: [0.95, 1.0]
-      - id: aura.conformance.constraints
-        type: double
-        brief: "Constraint adherence score (0–1)."
-        examples: [1.0, 0.9]
-      - id: aura.conformance.iteration_penalty
-        type: double
-        brief: "Iteration penalty score (0–1)."
-        examples: [1.0, 0.85]
-      - id: aura.conformance.overall
-        type: double
-        brief: "Weighted overall conformance score (0–1)."
-        examples: [0.97, 0.82]
-
   - id: aura.failure
     type: attribute_group
     brief: "Failure classification attributes."

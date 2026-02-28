@@ -14,7 +14,6 @@ Attribute groups:
 - `aura.deliverable` — Deliverable identification and status
 - `aura.spec` — Specification source metadata
 - `aura.phase` — Phase lifecycle tracking
-- `aura.conformance` — Quality scoring dimensions
 - `aura.failure` — Failure classification
 - `aura.recovery` — Recovery attempt tracking
 - `aura.tokens` — Token usage tracking
@@ -34,9 +33,6 @@ aura.deliverable (root span)
 │   │   └── aura.tool.call
 │   └── aura.recovery.attempt
 ├── aura.deliverable.validate
-│   ├── aura.conformance.functional
-│   ├── aura.conformance.correctness
-│   └── aura.conformance.constraints
 └── aura.deliverable.accept
 ```
 
@@ -50,7 +46,6 @@ The root `aura.deliverable` span covers the entire deliverable lifecycle. Child 
 | `aura.deliverables.accepted` | Counter | `{deliverable}` | Deliverables accepted |
 | `aura.deliverables.failed` | Counter | `{deliverable}` | Deliverables failed |
 | `aura.resolution_latency` | Histogram | `s` | Resolution latency distribution |
-| `aura.conformance.score` | Histogram | `1` | Conformance score distribution |
 | `aura.recovery.attempts` | Histogram | `{attempt}` | Recovery attempts per deliverable |
 | `aura.tool_calls.count` | Counter | `{call}` | Total tool calls |
 

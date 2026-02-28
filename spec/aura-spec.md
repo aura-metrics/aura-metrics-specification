@@ -2,7 +2,7 @@
 
 ## Abstract
 
-AURA is a metrics framework that measures the reliability and quality of AI agent output. Like DORA measures software delivery performance through four key metrics, AURA measures agent performance through five: Feature Throughput, Resolution Latency, Deliverable Failure Rate, Recovery Efficiency, and Spec Conformance. AURA provides a common language for evaluating whether an AI agent is producing work that meets its specifications — consistently, quickly, and correctly.
+AURA is a metrics framework that measures the reliability and performance of AI agent output. Like DORA measures software delivery performance through four key metrics, AURA measures agent performance through four: Feature Frequency, Feature Lead Time, Human Intervention Rate, and Recovery Efficiency. AURA provides a common language for evaluating whether an AI agent is producing work autonomously, quickly, and consistently.
 
 ## Status
 
@@ -16,13 +16,13 @@ Draft — seeking feedback.
 
 - **Phase**: A stage in the deliverable lifecycle. The canonical phases are: `propose`, `specs`, `design`, `tasks`, `apply`, `verify`, `archive`. Not all phases are required for every deliverable.
 
-- **Conformance**: The degree to which a deliverable meets its spec, scored 0–1. A conformance score captures quality beyond binary pass/fail.
+- **Conformance**: The degree to which a deliverable meets its spec. Used in the verify phase to determine acceptance or failure.
 
 - **Recovery**: A rework cycle triggered by a failure during execution. When verification fails and the agent retries, that retry is a recovery attempt.
 
-## 2. The Five Metrics
+## 2. The Four Metrics
 
-### 2.1 Feature Throughput
+### 2.1 Feature Frequency
 
 - **Definition**: The number of deliverables accepted per unit time.
 - **Calculation**: `count(deliverables where status = "accepted") / time_period`
@@ -38,7 +38,7 @@ Draft — seeking feedback.
 
 - **Why it matters**: Measures an agent's productive capacity at the deliverable level.
 
-### 2.2 Resolution Latency
+### 2.2 Feature Lead Time
 
 - **Definition**: Wall-clock time from spec received to deliverable accepted.
 - **Calculation**: `accepted_at - started_at` (in seconds)
@@ -55,10 +55,10 @@ Draft — seeking feedback.
 - **Why it matters**: Measures end-to-end speed including planning, execution, and verification.
 - **Note**: Includes human review time. To isolate agent time, subtract human wait phases from the total.
 
-### 2.3 Deliverable Failure Rate
+### 2.3 Human Intervention Rate
 
-- **Definition**: Percentage of deliverables that fail spec conformance.
-- **Calculation**: `count(deliverables where failed = true) / count(deliverables) × 100`
+- **Definition**: Percentage of deliverables that required human takeover or were abandoned without completion.
+- **Calculation**: `count(human_takeover or abandoned) / count(deliverables) × 100`
 - **Unit**: percentage
 - **Performance tiers**:
 
@@ -69,8 +69,8 @@ Draft — seeking feedback.
 | Medium | <15% |
 | Low | ≥15% |
 
-- **Why it matters**: Measures reliability. A failed deliverable is one that doesn't meet its spec.
-- **Note**: A deliverable that required recovery but eventually passed is NOT failed. Only deliverables abandoned or accepted below the conformance threshold are failed.
+- **Why it matters**: Measures autonomy. A low rate means the agent completes work without requiring human intervention.
+- **Note**: A deliverable that required agent self-correction (recovery) but completed without human involvement is NOT counted. Only deliverables where a human stepped in or the work was abandoned are counted.
 
 ### 2.4 Recovery Efficiency
 
@@ -87,39 +87,6 @@ Draft — seeking feedback.
 | Low | ≥20% |
 
 - **Why it matters**: Measures how cleanly an agent executes. High recovery overhead suggests the agent is guessing rather than planning.
-
-### 2.5 Spec Conformance
-
-- **Definition**: A weighted quality score measuring how well an accepted deliverable matches its spec.
-- **Calculation**: `(0.4 × functional) + (0.3 × correctness) + (0.2 × constraints) + (0.1 × iteration_penalty)`
-- **Unit**: score 0–1
-- **Performance tiers**:
-
-| Tier | Threshold |
-|------|-----------|
-| Elite | ≥0.95 |
-| High | ≥0.85 |
-| Medium | ≥0.70 |
-| Low | <0.70 |
-
-- **Why it matters**: Measures quality beyond pass/fail. Two accepted deliverables can have very different conformance scores.
-
-#### 2.5.1 Conformance Dimensions
-
-**Functional completeness** (weight 0.4)
-What proportion of specified requirements were met?
-`completed_requirements / total_requirements`
-
-**Correctness** (weight 0.3)
-Is the output factually and technically correct? Binary or scored by validation.
-
-**Constraint adherence** (weight 0.2)
-Were boundaries respected (performance budgets, file size limits, API contracts, style guides)?
-`1.0 - (0.1 × constraint_violations)`, floor 0.0.
-
-**Iteration penalty** (weight 0.1)
-Was it right the first time?
-`max(0, 1.0 - (0.15 × (iterations - 1)))`
 
 ## 3. Deliverable Lifecycle
 
@@ -227,12 +194,6 @@ The final record emitted when a deliverable is completed or failed. This is the 
 | `metrics.recovery_attempts` | integer | No | Recovery cycle count | `1` |
 | `metrics.tasks_completed` | integer | No | Tasks finished | `12` |
 | `metrics.tasks_total` | integer | No | Tasks planned | `12` |
-| `metrics.conformance` | object | No | Conformance scores | See below |
-| `metrics.conformance.functional` | number | No | Functional completeness 0–1 | `1.0` |
-| `metrics.conformance.correctness` | number | No | Correctness score 0–1 | `0.95` |
-| `metrics.conformance.constraints` | number | No | Constraint adherence 0–1 | `1.0` |
-| `metrics.conformance.iteration_penalty` | number | No | Iteration penalty 0–1 | `0.85` |
-| `metrics.conformance.overall` | number | No | Weighted overall score 0–1 | `0.97` |
 | `metrics.deliverable_failed` | boolean | No | Whether the deliverable failed | `false` |
 | `metrics.failure_type` | string | No | Failure classification | `null` |
 | `spec_source` | object | No | Where the spec came from | See 5.1 |
@@ -277,9 +238,6 @@ aura.deliverable (root span)
 │   │   └── aura.tool.call
 │   └── aura.recovery.attempt
 ├── aura.deliverable.validate
-│   ├── aura.conformance.functional
-│   ├── aura.conformance.correctness
-│   └── aura.conformance.constraints
 └── aura.deliverable.accept
 ```
 
@@ -298,11 +256,6 @@ The root `aura.deliverable` span covers the entire deliverable lifecycle. Child 
 | `aura.spec.requirements_count` | int | Number of requirements | `5` |
 | `aura.phase.name` | string | Current phase | `"apply"` |
 | `aura.phase.iteration` | int | Phase iteration count | `2` |
-| `aura.conformance.functional` | double | Functional completeness | `1.0` |
-| `aura.conformance.correctness` | double | Correctness score | `0.95` |
-| `aura.conformance.constraints` | double | Constraint adherence | `1.0` |
-| `aura.conformance.iteration_penalty` | double | Iteration penalty | `0.85` |
-| `aura.conformance.overall` | double | Overall conformance | `0.97` |
 | `aura.failure.type` | string | Failure classification | `"infinite_loop"` |
 | `aura.recovery.attempt` | int | Current recovery attempt number | `2` |
 | `aura.recovery.total` | int | Total recovery attempts | `3` |
@@ -325,7 +278,6 @@ Reference: [`otel/semantic-conventions.yaml`](../otel/semantic-conventions.yaml)
 | `aura.deliverables.accepted` | Counter | `{deliverable}` | Deliverables accepted |
 | `aura.deliverables.failed` | Counter | `{deliverable}` | Deliverables failed |
 | `aura.resolution_latency` | Histogram | `s` | Resolution latency distribution |
-| `aura.conformance.score` | Histogram | `1` | Conformance score distribution |
 | `aura.recovery.attempts` | Histogram | `{attempt}` | Recovery attempts per deliverable |
 | `aura.tool_calls.count` | Counter | `{call}` | Total tool calls |
 
@@ -347,31 +299,31 @@ The `spec_source` field in the data model captures which framework was used. Int
 
 ## 8. Supporting Metrics
 
-The five headline metrics tell you *what's happening*. The supporting metrics tell you *why*. Every supporting metric feeds at least one headline metric. When a headline metric goes red on a dashboard, drill into the supporting metrics to find the cause.
+The four headline metrics tell you *what's happening*. The supporting metrics tell you *why*. Every supporting metric feeds at least one headline metric. When a headline metric goes red on a dashboard, drill into the supporting metrics to find the cause.
 
 ### 8.1 Token Usage
 
 - **Definition**: Total input tokens, output tokens, and cost per deliverable.
-- **Feeds**: Recovery Efficiency, Feature Throughput
-- **Why it matters**: If an agent uses 50k tokens on a deliverable that should take 10k, the extra 40k is recovery overhead. It also contextualises Feature Throughput — are you shipping more because the agent is efficient, or because it's brute-forcing with expensive models? Token cost per deliverable is the unit economics metric teams will care about most once they're past the "does it work" phase.
+- **Feeds**: Recovery Efficiency, Feature Frequency
+- **Why it matters**: If an agent uses 50k tokens on a deliverable that should take 10k, the extra 40k is recovery overhead. It also contextualises Feature Frequency — are you shipping more because the agent is efficient, or because it's brute-forcing with expensive models? Token cost per deliverable is the unit economics metric teams will care about most once they're past the "does it work" phase.
 
 ### 8.2 Tool Call Count
 
 - **Definition**: Tool call counts by type (Write, Edit, Bash, Read, etc.).
-- **Feeds**: Recovery Efficiency, Resolution Latency
+- **Feeds**: Recovery Efficiency, Feature Lead Time
 - **Why it matters**: A healthy deliverable has a predictable ratio of reads to writes. If you see 40 Read calls and 2 Writes, the agent spent most of its time searching. If you see 15 Write calls and 12 Edit calls on the same files, it's rewriting its own work. The pattern tells you where the agent is struggling.
 
 ### 8.3 Phase Duration
 
 - **Definition**: Time spent in each phase (propose, specs, design, tasks, apply, verify).
-- **Feeds**: Resolution Latency
-- **Why it matters**: Decomposes Resolution Latency into its parts. A 4-hour deliverable where 3.5 hours was in `apply` is very different from one where 2 hours was human review during `verify`. This is where you find the bottleneck — is the agent slow, or is the human slow to review?
+- **Feeds**: Feature Lead Time
+- **Why it matters**: Decomposes Feature Lead Time into its parts. A 4-hour deliverable where 3.5 hours was in `apply` is very different from one where 2 hours was human review during `verify`. This is where you find the bottleneck — is the agent slow, or is the human slow to review?
 
 ### 8.4 Apply Iterations
 
 - **Definition**: How many times the apply phase ran before acceptance.
-- **Feeds**: Spec Conformance, Recovery Efficiency
-- **Why it matters**: The most direct indicator feeding Spec Conformance and Recovery Efficiency. First-time-right deliverables score higher on conformance (via the iteration penalty) and have zero recovery overhead. Tracking the count over time tells you if your agent is getting better or worse.
+- **Feeds**: Recovery Efficiency
+- **Why it matters**: First-time-right deliverables have zero recovery overhead. Tracking the count over time tells you if your agent is getting better or worse at completing work without rework.
 
 ### 8.5 Recovery Attempts
 
@@ -379,29 +331,23 @@ The five headline metrics tell you *what's happening*. The supporting metrics te
 - **Feeds**: Recovery Efficiency
 - **Why it matters**: Different from apply iterations. An apply iteration is "the agent stopped, human said try again." A recovery attempt is "the agent hit an error and self-corrected within a single run." High recovery attempts with eventual success means the agent is resilient but inefficient. High recovery attempts with failure means it's thrashing.
 
-### 8.6 Tasks Completed vs Total
-
-- **Definition**: Completed tasks versus total planned tasks from the spec's task checklist.
-- **Feeds**: Spec Conformance
-- **Why it matters**: The raw input to the functional completeness dimension of Spec Conformance. Useful on its own as a progress metric during execution. It answers "how far did the agent get" for both in-progress and failed deliverables.
-
-### 8.7 Failure Type Distribution
+### 8.6 Failure Type Distribution
 
 - **Definition**: Breakdown across failure types (spec_misunderstanding, hallucination, infinite_loop, tool_failure, constraint_violation, incomplete, regression).
-- **Feeds**: Deliverable Failure Rate
-- **Why it matters**: Categorises *why* deliverables fail, which the Deliverable Failure Rate alone can't tell you. A 12% failure rate means very different things if it's all tool failures (infrastructure problem) versus all hallucinations (model problem). This is the metric that tells you where to invest.
+- **Feeds**: Human Intervention Rate
+- **Why it matters**: Categorises *why* humans had to intervene or deliverables were abandoned. A 12% intervention rate means very different things if it's all tool failures (infrastructure problem) versus all hallucinations (model problem). This is the metric that tells you where to invest.
 
-### 8.8 Human Intervention Count
+### 8.7 Human Intervention Count
 
 - **Definition**: Number of times a human had to step in during execution.
-- **Feeds**: Recovery Efficiency, Spec Conformance
+- **Feeds**: Human Intervention Rate, Recovery Efficiency
 - **Why it matters**: An agent that completes every deliverable but needs 5 human nudges per run isn't really autonomous. This metric tracks the journey toward full autonomy.
 
-### 8.9 Complexity Distribution
+### 8.8 Complexity Distribution
 
 - **Definition**: Trivial/simple/moderate/complex breakdown of deliverables.
-- **Feeds**: Feature Throughput, Resolution Latency
-- **Why it matters**: Contextualises Feature Throughput and Resolution Latency. Shipping 10 trivial deliverables/day is not the same as shipping 2 complex ones. Without this, you can game throughput by splitting work into tiny pieces.
+- **Feeds**: Feature Frequency, Feature Lead Time
+- **Why it matters**: Contextualises Feature Frequency and Feature Lead Time. Shipping 10 trivial deliverables/day is not the same as shipping 2 complex ones. Without this, you can game throughput by splitting work into tiny pieces.
 
 ### 8.10 Relationship Map
 
@@ -410,28 +356,24 @@ Token Usage ──────────┐
 Tool Call Count ──────┼──→ Recovery Efficiency
 Recovery Attempts ────┘
                       ↕
-Phase Duration ───────────→ Resolution Latency
+Phase Duration ───────────→ Feature Lead Time
                       ↕
-Apply Iterations ─────┐
-Tasks Completed ──────┼──→ Spec Conformance
-Human Interventions ──┘
+Failure Type ─────────┐
+Human Interventions ──┴──→ Human Intervention Rate
                       ↕
-Failure Type ─────────────→ Deliverable Failure Rate
-                      ↕
-Complexity Distribution ──→ Feature Throughput
+Complexity Distribution ──→ Feature Frequency
 ```
 
 ## 9. Performance Tiers
 
-Summary of all performance tiers across the five metrics:
+Summary of all performance tiers across the four metrics:
 
 | Metric | Elite | High | Medium | Low |
 |--------|-------|------|--------|-----|
-| Feature Throughput | ≥3/day | ≥1/day | ≥1/week | <1/week |
-| Resolution Latency | <1 hour | <4 hours | <1 day | ≥1 day |
-| Deliverable Failure Rate | <5% | <10% | <15% | ≥15% |
+| Feature Frequency | ≥3/day | ≥1/day | ≥1/week | <1/week |
+| Feature Lead Time | <1 hour | <4 hours | <1 day | ≥1 day |
+| Human Intervention Rate | <5% | <10% | <15% | ≥15% |
 | Recovery Efficiency | <5% | <10% | <20% | ≥20% |
-| Spec Conformance | ≥0.95 | ≥0.85 | ≥0.70 | <0.70 |
 
 Tier classification uses the most recent rolling window. The recommended default window is 7 days or 20 deliverables, whichever comes first.
 
