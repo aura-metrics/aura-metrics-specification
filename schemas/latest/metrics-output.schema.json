@@ -93,43 +93,6 @@
           "minimum": 0,
           "description": "Total number of planned tasks."
         },
-        "conformance": {
-          "type": "object",
-          "description": "Spec conformance scores.",
-          "properties": {
-            "functional": {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 1,
-              "description": "Functional completeness score (0–1)."
-            },
-            "correctness": {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 1,
-              "description": "Correctness score (0–1)."
-            },
-            "constraints": {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 1,
-              "description": "Constraint adherence score (0–1)."
-            },
-            "iteration_penalty": {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 1,
-              "description": "Iteration penalty score (0–1)."
-            },
-            "overall": {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 1,
-              "description": "Weighted overall conformance score (0–1)."
-            }
-          },
-          "additionalProperties": false
-        },
         "deliverable_failed": {
           "type": "boolean",
           "description": "Whether the deliverable failed spec conformance."

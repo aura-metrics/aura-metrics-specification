@@ -1,5 +1,5 @@
 {
-  "_description": "A successful deliverable: dark mode feature. 12 tasks, all completed. High conformance (0.97). Resolution latency ~45 minutes. Two apply iterations with one recovery attempt.",
+  "_description": "A successful deliverable: dark mode feature. 12 tasks, all completed. No human intervention. Feature lead time ~45 minutes. Two apply iterations with one recovery attempt.",
   "schema_version": "0.1.0",
   "change_id": "add-dark-mode",
   "started_at": "2026-02-26T10:00:00Z",
@@ -29,13 +29,6 @@
     "recovery_attempts": 1,
     "tasks_completed": 12,
     "tasks_total": 12,
-    "conformance": {
-      "functional": 1.0,
-      "correctness": 0.95,
-      "constraints": 1.0,
-      "iteration_penalty": 0.85,
-      "overall": 0.97
-    },
     "deliverable_failed": false,
     "failure_type": null,
     "token_usage": {
